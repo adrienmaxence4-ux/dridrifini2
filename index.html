@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Espace Créatif du Serveur</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      text-align: center;
+      background: linear-gradient(135deg, #ffe29f, #ffa99f);
+      color: #333;
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    h1 {
+      font-size: 2.3em;
+      margin-bottom: 1em;
+    }
+
+    .btn {
+      background: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 15px 30px;
+      margin: 10px;
+      font-size: 1.2em;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
+      background: #ffe29f;
+    }
+
+    #formulaire {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    input {
+      padding: 10px;
+      width: 270px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+      margin-top: 10px;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 1.2em;
+      font-weight: bold;
+      max-width: 80%;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎨 Bienvenue sur l’Espace Créatif du Serveur 🎨</h1>
+
+  <div id="choice">
+    <button class="btn" onclick="choose('artiste')">Je suis Artiste</button>
+    <button class="btn" onclick="choose('visiteur')">Je suis Visiteur</button>
+  </div>
+
+  <div id="formulaire">
+    <p>🖌️ Entrez votre nom ou pseudo Discord :</p>
+    <input type="text" id="nom" placeholder="Exemple : @NomDiscord">
+    <p>🖼️ Donnez un endroit où on peut voir votre travail (site, réseau, etc.) :</p>
+    <input type="text" id="lien" placeholder="Exemple : https://instagram.com/monpseudo">
+    <button class="btn" onclick="sendArtistLink()">Envoyer</button>
+  </div>
+
+  <div id="result"></div>
+
+  <script>
+    const webhookURL = "https://discord.com/api/webhooks/1430205464226037945/DZG49PMOKi81MASgrJoBioJrznSAvrH5fIqTv6Yupu8y0ZuT8ClQfQzvJM-BGiQkv10A"; // 🔧 Mets ici ton lien webhook Discord
+
+    function choose(role) {
+      document.getElementById("choice").style.display = "none";
+      const form = document.getElementById("formulaire");
+      const result = document.getElementById("result");
+
+      if (role === "artiste") {
+        form.style.display = "flex";
+        result.innerText = "";
+      } else {
+        result.innerText = "👋 Bienvenue, visiteur curieux ! Explore et amuse-toi !";
+        sendVisitorToDiscord();
+      }
+    }
+
+    function sendArtistLink() {
+      const nom = document.getElementById("nom").value.trim();
+      const lien = document.getElementById("lien").value.trim();
+      const result = document.getElementById("result");
+
+      if (nom === "" || lien === "") {
+        result.innerText = "❗ Merci de remplir les deux champs avant d’envoyer.";
+        return;
+      }
+
+      // Message affiché sur le site
+      result.innerText = "Merci ! Ton lien a bien été envoyé 📬\nUn modérateur Discord va bientôt te confirmer ton statut d’artiste.";
+
+      // Envoi sur Discord
+      const data = {
+        content: `🎨 Un **artiste** a soumis un lien pour vérification !\n👤 Nom : ${nom}\n🔗 Lien : ${lien}\n🕒 En attente de validation d’un modérateur.`
+      };
+
+      fetch(webhookURL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      }).catch(err => console.error("Erreur d’envoi :", err));
+    }
+
+    function sendVisitorToDiscord() {
+      const data = {
+        content: "👀 Un nouveau **visiteur** vient de découvrir le site !"
+      };
+
+      fetch(webhookURL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      }).catch(err => console.error("Erreur d’envoi :", err));
+    }
+  </script>
+</body>
+</html>
