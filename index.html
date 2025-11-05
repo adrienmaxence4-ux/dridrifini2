@@ -45,7 +45,7 @@
       align-items: center;
     }
 
-    input {
+    input, select {
       padding: 10px;
       width: 270px;
       border-radius: 8px;
@@ -73,15 +73,32 @@
   <div id="formulaire">
     <p>🖌️ Entrez votre nom ou pseudo Discord :</p>
     <input type="text" id="nom" placeholder="Exemple : @NomDiscord">
-    <p>🖼️ Donnez un endroit où on peut voir votre travail (site, réseau, etc.) :</p>
+
+    <p>🎭 Sélectionnez votre domaine artistique :</p>
+    <select id="domaine">
+      <option value="">Choisissez votre domaine</option>
+      <option>🎨 Dessin / Illustration</option>
+      <option>🖌️ Peinture</option>
+      <option>📷 Photographie</option>
+      <option>🎬 Vidéo / Montage</option>
+      <option>🎵 Musique</option>
+      <option>🎤 Chant</option>
+      <option>💻 Arts numériques</option>
+      <option>🧵 Couture / Mode</option>
+      <option>🧱 Sculpture / 3D</option>
+      <option>📚 Écriture</option>
+    </select>
+
+    <p>🖼️ Lien vers votre travail (site, Insta, etc.) :</p>
     <input type="text" id="lien" placeholder="Exemple : https://instagram.com/monpseudo">
+
     <button class="btn" onclick="sendArtistLink()">Envoyer</button>
   </div>
 
   <div id="result"></div>
 
   <script>
-    const webhookURL = "https://discord.com/api/webhooks/1430205464226037945/DZG49PMOKi81MASgrJoBioJrznSAvrH5fIqTv6Yupu8y0ZuT8ClQfQzvJM-BGiQkv10A"; // 🔧 Mets ici ton lien webhook Discord
+    const webhookURL = "TON_WEBHOOK_ICI"; // Mets ton webhook
 
     function choose(role) {
       document.getElementById("choice").style.display = "none";
@@ -92,27 +109,30 @@
         form.style.display = "flex";
         result.innerText = "";
       } else {
-        result.innerText = "👋 Bienvenue, visiteur curieux ! Explore et amuse-toi !";
+        result.innerText = "👋 Bienvenue, visiteur ! Profite et amuse-toi !";
         sendVisitorToDiscord();
       }
     }
 
     function sendArtistLink() {
       const nom = document.getElementById("nom").value.trim();
+      const domaine = document.getElementById("domaine").value.trim();
       const lien = document.getElementById("lien").value.trim();
       const result = document.getElementById("result");
 
-      if (nom === "" || lien === "") {
-        result.innerText = "❗ Merci de remplir les deux champs avant d’envoyer.";
+      if (!nom || !domaine || !lien) {
+        result.innerText = "❗ Merci de remplir tous les champs.";
         return;
       }
 
-      // Message affiché sur le site
-      result.innerText = "Merci ! Ton lien a bien été envoyé 📬\nUn modérateur Discord va bientôt te confirmer ton statut d’artiste.";
+      result.innerText = "✅ Merci ! Ton lien a été envoyé.\nUn modérateur validera ton rôle bientôt.";
 
-      // Envoi sur Discord
       const data = {
-        content: `🎨 Un **artiste** a soumis un lien pour vérification !\n👤 Nom : ${nom}\n🔗 Lien : ${lien}\n🕒 En attente de validation d’un modérateur.`
+        content: `🎨 **Nouvelle demande artiste !**
+👤 Nom : ${nom}
+📂 Domaine : ${domaine}
+🔗 Lien : ${lien}
+⏳ En attente de validation d'un modérateur.`
       };
 
       fetch(webhookURL, {
@@ -123,9 +143,7 @@
     }
 
     function sendVisitorToDiscord() {
-      const data = {
-        content: "👀 Un nouveau **visiteur** vient de découvrir le site !"
-      };
+      const data = { content: "👀 Un nouveau **visiteur** vient de découvrir le site !" };
 
       fetch(webhookURL, {
         method: "POST",
