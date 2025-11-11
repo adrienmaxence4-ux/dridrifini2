@@ -1,157 +1,188 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Espace Créatif du Serveur</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Espace Créatif - Vérif pseudo (simulée)</title>
   <style>
-    body {
-      font-family: "Poppins", sans-serif;
-      text-align: center;
-      background: linear-gradient(135deg, #ffe29f, #ffa99f);
-      color: #333;
-      height: 100vh;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+    body{
+      font-family: "Poppins",sans-serif;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height:100vh;
+      margin:0;
+      background: linear-gradient(135deg,#ffe29f,#ffa99f);
+      color:#222;
+      padding:20px;
+      box-sizing:border-box;
     }
-
-    h1 {
-      font-size: 2.3em;
-      margin-bottom: 1em;
+    .card{
+      background:rgba(255,255,255,0.95);
+      padding:22px;
+      border-radius:12px;
+      width:100%;
+      max-width:480px;
+      box-shadow:0 8px 30px rgba(0,0,0,0.12);
+      text-align:center;
     }
-
-    .btn {
-      background: #fff;
-      border: none;
-      border-radius: 10px;
-      padding: 15px 30px;
-      margin: 10px;
-      font-size: 1.2em;
-      cursor: pointer;
-      transition: transform 0.2s, background 0.2s;
+    h1{margin:0 0 14px;font-size:1.6rem}
+    .btn{
+      background:#fff;border:none;border-radius:10px;padding:12px 18px;margin:8px;font-size:1rem;cursor:pointer;transition:all .18s;
     }
-
-    .btn:hover {
-      transform: scale(1.05);
-      background: #ffe29f;
+    .btn:hover{transform:scale(1.03)}
+    input,select{
+      width:100%;padding:10px;border-radius:8px;border:1px solid #cfcfcf;margin-top:8px;font-size:0.98rem;
+      box-sizing:border-box;
     }
-
-    #formulaire {
-      display: none;
-      flex-direction: column;
-      align-items: center;
+    #formulaire{display:none;margin-top:12px;text-align:left}
+    #result{margin-top:14px;font-weight:600;white-space:pre-line}
+    .spinner{
+      display:inline-block;width:18px;height:18px;border:3px solid rgba(0,0,0,0.15);border-top-color:#333;border-radius:50%;
+      animation:spin .9s linear infinite;vertical-align:middle;margin-right:8px;
     }
-
-    input, select {
-      padding: 10px;
-      width: 270px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 1em;
-      margin-top: 10px;
-    }
-
-    #result {
-      margin-top: 20px;
-      font-size: 1.2em;
-      font-weight: bold;
-      max-width: 80%;
-    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .small{font-size:0.9rem;color:#555}
   </style>
 </head>
 <body>
-  <h1>🎨 Bienvenue sur l’Espace Créatif du Serveur 🎨</h1>
+  <div class="card">
+    <h1>🎨 Espace Créatif — Soumission artiste</h1>
 
-  <div id="choice">
-    <button class="btn" onclick="choose('artiste')">Je suis Artiste</button>
-    <button class="btn" onclick="choose('visiteur')">Je suis Visiteur</button>
+    <div id="choice">
+      <button class="btn" onclick="choose('artiste')">Je suis Artiste</button>
+      <button class="btn" onclick="choose('visiteur')">Je suis Visiteur</button>
+    </div>
+
+    <div id="formulaire">
+      <label class="small">🖌️ Pseudo Discord (ex: @MonPseudo) :</label>
+      <input id="nom" type="text" placeholder="@MonPseudo" />
+
+      <label class="small" style="margin-top:10px">🎭 Domaine artistique :</label>
+      <select id="domaine">
+        <option value="">-- Choisissez votre domaine --</option>
+        <option>🎨 Dessin / Illustration</option>
+        <option>🖌️ Peinture</option>
+        <option>📷 Photographie</option>
+        <option>🎬 Vidéo / Montage</option>
+        <option>🎵 Musique</option>
+        <option>🎤 Chant</option>
+        <option>💻 Arts numériques</option>
+        <option>🧵 Couture / Mode</option>
+        <option>🧱 Sculpture / 3D</option>
+        <option>📚 Écriture</option>
+      </select>
+
+      <label class="small" style="margin-top:10px">🖼️ Lien vers votre travail :</label>
+      <input id="lien" type="url" placeholder="https://instagram.com/monpseudo" />
+
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="btn" onclick="submitArtist()" style="flex:1">Envoyer pour vérif</button>
+        <button class="btn" onclick="resetForm()" style="flex:0">Annuler</button>
+      </div>
+    </div>
+
+    <div id="result"></div>
   </div>
-
-  <div id="formulaire">
-    <p>🖌️ Entrez votre nom ou pseudo Discord :</p>
-    <input type="text" id="nom" placeholder="Exemple : @NomDiscord">
-
-    <p>🎭 Sélectionnez votre domaine artistique :</p>
-    <select id="domaine">
-      <option value="">Choisissez votre domaine</option>
-      <option>🎨 Dessin / Illustration</option>
-      <option>🖌️ Peinture</option>
-      <option>📷 Photographie</option>
-      <option>🎬 Vidéo / Montage</option>
-      <option>🎵 Musique</option>
-      <option>🎤 Chant</option>
-      <option>💻 Arts numériques</option>
-      <option>🧵 Couture / Mode</option>
-      <option>🧱 Sculpture / 3D</option>
-      <option>📚 Écriture</option>
-    </select>
-
-    <p>🖼️ Lien vers votre travail (site, Insta, etc.) :</p>
-    <input type="text" id="lien" placeholder="Exemple : https://instagram.com/monpseudo">
-
-    <button class="btn" onclick="sendArtistLink()">Envoyer</button>
-  </div>
-
-  <div id="result"></div>
 
   <script>
-    const webhookURL = "https://discord.com/api/webhooks/1430205464226037945/DZG49PMOKi81MASgrJoBioJrznSAvrH5fIqTv6Yupu8y0ZuT8ClQfQzvJM-BGiQkv10A"; // Mets ton webhook
+    // 🔧 Remplace par ton webhook Discord (ex: https://discord.com/api/webhooks/xxx/yyy)
+    const webhookURL = "TON_WEBHOOK_ICI";
 
-    function choose(role) {
-      document.getElementById("choice").style.display = "none";
-      const form = document.getElementById("formulaire");
-      const result = document.getElementById("result");
-
-      if (role === "artiste") {
-        form.style.display = "flex";
-        result.innerText = "";
+    function choose(role){
+      document.getElementById('choice').style.display = 'none';
+      const form = document.getElementById('formulaire');
+      const result = document.getElementById('result');
+      result.innerText = '';
+      if(role === 'artiste'){
+        form.style.display = 'block';
       } else {
-        result.innerText = "👋 Bienvenue, visiteur ! Profite et amuse-toi !";
+        form.style.display = 'none';
+        result.innerText = "👋 Bienvenue visiteur ! Ton arrivée a été notifiée sur Discord.";
         sendVisitorToDiscord();
       }
     }
 
-    function sendArtistLink() {
-      const nom = document.getElementById("nom").value.trim();
-      const domaine = document.getElementById("domaine").value.trim();
-      const lien = document.getElementById("lien").value.trim();
-      const result = document.getElementById("result");
+    function resetForm(){
+      document.getElementById('choice').style.display = 'block';
+      document.getElementById('formulaire').style.display = 'none';
+      document.getElementById('result').innerText = '';
+      document.getElementById('nom').value = '';
+      document.getElementById('domaine').selectedIndex = 0;
+      document.getElementById('lien').value = '';
+    }
 
-      if (!nom || !domaine || !lien) {
-        result.innerText = "❗ Merci de remplir tous les champs.";
+    // Fonction qui "simule" la vérification du pseudo (côté client)
+    function simulatePseudoCheck(pseudo){
+      // heuristique simple :
+      // - si contient '@' => meilleure chance d'être trouvé
+      // - si longueur < 2 => impossible
+      // on renvoie {found: bool, reason: string}
+      if(!pseudo || pseudo.length < 2) return {found:false, reason:'Pseudo invalide'};
+      const hasAt = pseudo.includes('@');
+      // probabilité : 80% si '@', 50% sinon
+      const prob = hasAt ? 0.8 : 0.5;
+      const found = Math.random() < prob;
+      return found ? {found:true, reason:'Simulé : pseudo trouvé'} : {found:false, reason:'Simulé : pseudo non trouvé'};
+    }
+
+    function submitArtist(){
+      const nom = document.getElementById('nom').value.trim();
+      const domaine = document.getElementById('domaine').value.trim();
+      const lien = document.getElementById('lien').value.trim();
+      const resultEl = document.getElementById('result');
+
+      if(!nom || !domaine || !lien){
+        resultEl.innerText = "❗ Merci de remplir tous les champs (pseudo, domaine, lien).";
         return;
       }
 
-      result.innerText = "✅ Merci ! Ton lien a été envoyé.\nUn modérateur validera ton rôle bientôt.";
+      // affichage du chargement
+      resultEl.innerHTML = '<span class="spinner"></span>Vérification du pseudo en cours...';
 
-      const data = {
-        content: `🎨 **Nouvelle demande artiste !**
-👤 Nom : ${nom}
-📂 Domaine : ${domaine}
-🔗 Lien : ${lien}
-⏳ En attente de validation d'un modérateur.`
-      };
+      // délai pour simuler la vérif (1.2s à 2.2s)
+      const delay = 1200 + Math.floor(Math.random()*1000);
+      setTimeout(() => {
+        const check = simulatePseudoCheck(nom);
+        if(check.found){
+          resultEl.innerHTML = "✅ Pseudo simulé : trouvé sur le serveur.\n✅ Ton lien a été envoyé aux modérateurs pour validation.\n(attendre la confirmation du staff)";
+        } else {
+          resultEl.innerHTML = "⚠️ Pseudo simulé : introuvable.\nTon lien a quand même été envoyé aux modérateurs pour vérification manuelle.";
+        }
 
-      fetch(webhookURL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      }).catch(err => console.error("Erreur d’envoi :", err));
+        // Envoi des données (inclut le résultat de la vérif simulée)
+        const payload = {
+          content:
+            `🎨 **Nouvelle soumission artiste (SIMULÉ)**\n` +
+            `👤 Pseudo déclaré : ${nom}\n` +
+            `📂 Domaine : ${domaine}\n` +
+            `🔗 Lien : ${lien}\n` +
+            `🔎 Résultat vérif pseudo (simulée) : ${check.found ? 'trouvé' : 'non trouvé'}\n` +
+            `⚠️ Note : vérification faite côté site (simulée) — valider manuellement via le serveur.`
+        };
+
+        // envoi POST au webhook
+        fetch(webhookURL, {
+          method:'POST',
+          headers: { 'Content-Type':'application/json' },
+          body: JSON.stringify(payload)
+        }).catch(err => {
+          console.error('Erreur fetch webhook:', err);
+          // affiche une petite note côté utilisateur si l'envoi échoue
+          resultEl.innerHTML += "\n\n❗ Erreur lors de l'envoi de la notification (vérifie ton webhook).";
+        });
+
+      }, delay);
     }
 
-    function sendVisitorToDiscord() {
-      const data = { content: "👀 Un nouveau **visiteur** vient de découvrir le site !" };
-
+    function sendVisitorToDiscord(){
+      const payload = { content: "👀 Un nouveau visiteur vient de découvrir le site !" };
       fetch(webhookURL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      }).catch(err => console.error("Erreur d’envoi :", err));
+        method:'POST',
+        headers:{ 'Content-Type':'application/json' },
+        body: JSON.stringify(payload)
+      }).catch(err => console.error('Erreur fetch webhook:', err));
     }
   </script>
 </body>
 </html>
-
