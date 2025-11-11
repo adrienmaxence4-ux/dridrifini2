@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Espace Créatif - Vérif pseudo (simulée)</title>
+  <title>Espace Créatif - Vérif pseudo (plus stricte)</title>
   <style>
     body{
       font-family: "Poppins",sans-serif;
@@ -18,31 +18,24 @@
       box-sizing:border-box;
     }
     .card{
-      background:rgba(255,255,255,0.95);
+      background:rgba(255,255,255,0.96);
       padding:22px;
       border-radius:12px;
       width:100%;
-      max-width:480px;
+      max-width:520px;
       box-shadow:0 8px 30px rgba(0,0,0,0.12);
       text-align:center;
     }
     h1{margin:0 0 14px;font-size:1.6rem}
-    .btn{
-      background:#fff;border:none;border-radius:10px;padding:12px 18px;margin:8px;font-size:1rem;cursor:pointer;transition:all .18s;
-    }
+    .btn{background:#fff;border:none;border-radius:10px;padding:12px 18px;margin:8px;font-size:1rem;cursor:pointer;transition:all .18s;}
     .btn:hover{transform:scale(1.03)}
-    input,select{
-      width:100%;padding:10px;border-radius:8px;border:1px solid #cfcfcf;margin-top:8px;font-size:0.98rem;
-      box-sizing:border-box;
-    }
+    input,select{width:100%;padding:10px;border-radius:8px;border:1px solid #cfcfcf;margin-top:8px;font-size:0.98rem;box-sizing:border-box;}
     #formulaire{display:none;margin-top:12px;text-align:left}
     #result{margin-top:14px;font-weight:600;white-space:pre-line}
-    .spinner{
-      display:inline-block;width:18px;height:18px;border:3px solid rgba(0,0,0,0.15);border-top-color:#333;border-radius:50%;
-      animation:spin .9s linear infinite;vertical-align:middle;margin-right:8px;
-    }
+    .spinner{display:inline-block;width:18px;height:18px;border:3px solid rgba(0,0,0,0.15);border-top-color:#333;border-radius:50%;animation:spin .9s linear infinite;vertical-align:middle;margin-right:8px;}
     @keyframes spin{to{transform:rotate(360deg)}}
     .small{font-size:0.9rem;color:#555}
+    .note{font-size:0.85rem;color:#666;margin-top:8px}
   </style>
 </head>
 <body>
@@ -55,8 +48,8 @@
     </div>
 
     <div id="formulaire">
-      <label class="small">🖌️ Pseudo Discord (ex: @MonPseudo) :</label>
-      <input id="nom" type="text" placeholder="@MonPseudo" />
+      <label class="small">🖌️ Pseudo Discord (ex: MonPseudo#1234) :</label>
+      <input id="nom" type="text" placeholder="Ex : @MonPseudo#1234 ou MonPseudo#1234" />
 
       <label class="small" style="margin-top:10px">🎭 Domaine artistique :</label>
       <select id="domaine">
@@ -80,6 +73,10 @@
         <button class="btn" onclick="submitArtist()" style="flex:1">Envoyer pour vérif</button>
         <button class="btn" onclick="resetForm()" style="flex:0">Annuler</button>
       </div>
+
+      <div class="note">
+        Astuce : pour une vérif plus rapide, donne ton tag exact (Pseudo#1234) ou ton ID (suite de chiffres).
+      </div>
     </div>
 
     <div id="result"></div>
@@ -87,7 +84,7 @@
 
   <script>
     // 🔧 Remplace par ton webhook Discord (ex: https://discord.com/api/webhooks/xxx/yyy)
-    const webhookURL = "TON_WEBHOOK_ICI";
+    const webhookURL = "https://discord.com/api/webhooks/1430205464226037945/DZG49PMOKi81MASgrJoBioJrznSAvrH5fIqTv6Yupu8y0ZuT8ClQfQzvJM-BGiQkv10A";
 
     function choose(role){
       document.getElementById('choice').style.display = 'none';
@@ -112,27 +109,30 @@
       document.getElementById('lien').value = '';
     }
 
-    // Fonction qui "simule" la vérification du pseudo (côté client)
-    function simulatePseudoCheck(pseudo){
-      // heuristique simple :
-      // - si contient '@' => meilleure chance d'être trouvé
-      // - si longueur < 2 => impossible
-      // on renvoie {found: bool, reason: string}
-      if(!pseudo || pseudo.length < 2) return {found:false, reason:'Pseudo invalide'};
-      const hasAt = pseudo.includes('@');
-      // probabilité : 80% si '@', 50% sinon
-      const prob = hasAt ? 0.8 : 0.5;
-      const found = Math.random() < prob;
-      return found ? {found:true, reason:'Simulé : pseudo trouvé'} : {found:false, reason:'Simulé : pseudo non trouvé'};
+    // NOUVEAU : vérif déterministe côté client
+    // Accepte comme "probable" uniquement :
+    // - Discord tag : Pseudo#1234  (optionnellement précédé d'un @)
+    // - ou un ID Discord : suite de 17-20 chiffres
+    function checkDiscordPseudoFormat(pseudo){
+      if(!pseudo) return {valid:false, reason:'Vide'};
+      // nettoie espaces
+      const s = pseudo.trim();
+      // regex tag (avec ou sans @) : /^@?(.{1,32})#(\d{4})$/
+      const tagRegex = /^@?(.{1,32})#(\d{4})$/;
+      const idRegex = /^(\d{17,20})$/;
+      if(tagRegex.test(s)) return {valid:true, type:'tag', reason:'Tag valide (Pseudo#1234)'};
+      if(idRegex.test(s)) return {valid:true, type:'id', reason:'ID Discord valide (suite de chiffres)'};
+      // si commence par @ et sans # — on considère invalide pour être strict
+      return {valid:false, reason:'Format invalide. Donne un Tag (Pseudo#1234) ou un ID (suite de chiffres).'};
     }
 
     function submitArtist(){
-      const nom = document.getElementById('nom').value.trim();
+      const nomRaw = document.getElementById('nom').value.trim();
       const domaine = document.getElementById('domaine').value.trim();
       const lien = document.getElementById('lien').value.trim();
       const resultEl = document.getElementById('result');
 
-      if(!nom || !domaine || !lien){
+      if(!nomRaw || !domaine || !lien){
         resultEl.innerText = "❗ Merci de remplir tous les champs (pseudo, domaine, lien).";
         return;
       }
@@ -140,39 +140,43 @@
       // affichage du chargement
       resultEl.innerHTML = '<span class="spinner"></span>Vérification du pseudo en cours...';
 
-      // délai pour simuler la vérif (1.2s à 2.2s)
-      const delay = 1200 + Math.floor(Math.random()*1000);
+      // petit délai pour l'effet de vérif
       setTimeout(() => {
-        const check = simulatePseudoCheck(nom);
-        if(check.found){
-          resultEl.innerHTML = "✅ Pseudo simulé : trouvé sur le serveur.\n✅ Ton lien a été envoyé aux modérateurs pour validation.\n(attendre la confirmation du staff)";
+        const check = checkDiscordPseudoFormat(nomRaw);
+        if(check.valid){
+          resultEl.innerHTML =
+            "✅ Format du pseudo : OK (" + check.reason + ").\n" +
+            "✅ Ton lien a été envoyé aux modérateurs pour validation.\n" +
+            "(Le staff confirmera sur Discord si le compte existe sur le serveur.)";
         } else {
-          resultEl.innerHTML = "⚠️ Pseudo simulé : introuvable.\nTon lien a quand même été envoyé aux modérateurs pour vérification manuelle.";
+          resultEl.innerHTML =
+            "⚠️ Format du pseudo : NON VALIDE.\n" +
+            check.reason + "\n\n" +
+            "Ton lien a quand même été envoyé aux modérateurs pour vérification manuelle. " +
+            "Donne un tag exact (Pseudo#1234) ou ton ID pour accélérer la validation.";
         }
 
-        // Envoi des données (inclut le résultat de la vérif simulée)
+        // Prépare le message envoyé au webhook (inclut le résultat du contrôle de format)
         const payload = {
           content:
-            `🎨 **Nouvelle soumission artiste (SIMULÉ)**\n` +
-            `👤 Pseudo déclaré : ${nom}\n` +
+            `🎨 **Nouvelle soumission artiste**\n` +
+            `👤 Pseudo déclaré : ${nomRaw}\n` +
             `📂 Domaine : ${domaine}\n` +
             `🔗 Lien : ${lien}\n` +
-            `🔎 Résultat vérif pseudo (simulée) : ${check.found ? 'trouvé' : 'non trouvé'}\n` +
-            `⚠️ Note : vérification faite côté site (simulée) — valider manuellement via le serveur.`
+            `🔎 Contrôle format pseudo : ${check.valid ? 'format valide' : 'format invalide'} (${check.reason})\n` +
+            `⚠️ Note : vérification réelle du compte à faire manuellement par le staff sur Discord.`
         };
 
-        // envoi POST au webhook
         fetch(webhookURL, {
           method:'POST',
-          headers: { 'Content-Type':'application/json' },
+          headers:{ 'Content-Type':'application/json' },
           body: JSON.stringify(payload)
         }).catch(err => {
           console.error('Erreur fetch webhook:', err);
-          // affiche une petite note côté utilisateur si l'envoi échoue
           resultEl.innerHTML += "\n\n❗ Erreur lors de l'envoi de la notification (vérifie ton webhook).";
         });
 
-      }, delay);
+      }, 900);
     }
 
     function sendVisitorToDiscord(){
