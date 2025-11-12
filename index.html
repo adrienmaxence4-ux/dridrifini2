@@ -7,7 +7,7 @@
   <style>
     body {
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #f7980a, #f7ba5e);
+      background: linear-gradient(135deg, #ff9966, #ff5e62);
       color: #fff;
       text-align: center;
       margin: 0;
@@ -17,54 +17,62 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
+      overflow: hidden;
     }
 
     h1 {
-      font-size: 2.5rem;
+      font-size: 2.6rem;
       margin-bottom: 20px;
-      text-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+      text-shadow: 2px 2px 6px rgba(0,0,0,0.3);
+    }
+
+    p {
+      font-size: 1.1rem;
     }
 
     .choices {
       display: flex;
       gap: 30px;
+      flex-wrap: wrap;
+      justify-content: center;
     }
 
     button {
-      background: #fff;
+      background: linear-gradient(135deg, #fff6a3, #ffd84d);
       color: #333;
       border: none;
-      padding: 15px 25px;
-      border-radius: 15px;
+      padding: 15px 30px;
+      border-radius: 20px;
       font-size: 1.2rem;
       cursor: pointer;
-      box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+      box-shadow: 0 5px 10px rgba(0,0,0,0.3);
       transition: 0.3s;
     }
 
     button:hover {
       transform: scale(1.1);
-      background: #ffe15d;
+      background: linear-gradient(135deg, #ffe15d, #fff3b0);
     }
 
     .container {
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.1);
       padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+      border-radius: 25px;
+      box-shadow: 0 5px 25px rgba(0,0,0,0.25);
       width: 90%;
-      max-width: 400px;
-      backdrop-filter: blur(10px);
+      max-width: 420px;
+      backdrop-filter: blur(12px);
     }
 
     input {
-      padding: 10px;
-      width: 80%;
-      border-radius: 10px;
+      padding: 12px;
+      width: 85%;
+      border-radius: 12px;
       border: none;
-      margin: 8px 0;
+      margin: 10px 0;
       font-size: 1rem;
       text-align: center;
+      background-color: rgba(255,255,255,0.9);
     }
 
     .hidden {
@@ -79,40 +87,54 @@
 
     @keyframes bounce {
       0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
+      50% { transform: translateY(-8px); }
+    }
+
+    #response {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    footer {
+      position: absolute;
+      bottom: 10px;
+      font-size: 0.9rem;
+      opacity: 0.8;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <div id="home">
-      <div class="emoji">🎨🎭</div>
+      <div class="emoji">🔥🎨</div>
       <h1>Bienvenue sur la scène créative !</h1>
-      <p>Choisis ton rôle 👇</p>
+      <p>Choisis ton rôle et rejoins l'aventure 🌟</p>
       <div class="choices">
         <button onclick="showVisitor()">👀 Visiteur</button>
-        <button onclick="showArtist()">🎨 Artiste</button>
+        <button onclick="showArtist()">🎭 Artiste</button>
       </div>
     </div>
 
     <div id="visitor" class="hidden">
       <div class="emoji">👋</div>
       <h2>Bienvenue, visiteur curieux !</h2>
-      <p>Merci de venir découvrir nos artistes 💫</p>
+      <p>Merci de venir admirer nos talents ✨</p>
       <button onclick="goHome()">🏠 Retour</button>
     </div>
 
     <div id="artist" class="hidden">
       <div class="emoji">🧑‍🎨</div>
-      <h2>Formulaire artiste 🎭</h2>
-      <p>Entre ton pseudo et un lien vers ton travail ✨</p>
-      <input type="text" id="pseudo" placeholder="Ton pseudo 🎨" />
+      <h2>Formulaire artiste 🎨</h2>
+      <p>Donne ton pseudo et un lien vers ton travail 🧡</p>
+      <input type="text" id="pseudo" placeholder="Ton pseudo 🎭" />
       <input type="url" id="link" placeholder="Lien vers ton art 🌐" />
       <button onclick="sendData()">🚀 Envoyer</button>
       <button onclick="goHome()">🏠 Retour</button>
       <p id="response"></p>
     </div>
   </div>
+
+  <footer>✨ Fait avec passion par Dridri 🧡</footer>
 
   <script>
     const home = document.getElementById("home");
@@ -145,7 +167,6 @@
         return;
       }
 
-      // Envoi au bot (tu mettras ton URL Flask ici)
       try {
         const response = await fetch("https://tonserveur.com/verif", {
           method: "POST",
@@ -161,4 +182,3 @@
   </script>
 </body>
 </html>
-
