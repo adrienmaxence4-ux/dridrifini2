@@ -1,191 +1,84 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Espace Créatif - Vérif pseudo (plus stricte)</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vérification Artiste</title>
   <style>
-    body{
-      font-family: "Poppins",sans-serif;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      min-height:100vh;
-      margin:0;
-      background: linear-gradient(135deg,#ffe29f,#ffa99f);
-      color:#222;
-      padding:20px;
-      box-sizing:border-box;
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: linear-gradient(135deg, #f6d365, #fda085);
+      color: #333;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
-    .card{
-      background:rgba(255,255,255,0.96);
-      padding:22px;
-      border-radius:12px;
-      width:100%;
-      max-width:520px;
-      box-shadow:0 8px 30px rgba(0,0,0,0.12);
-      text-align:center;
+    h1 {
+      margin-bottom: 20px;
     }
-    h1{margin:0 0 14px;font-size:1.6rem}
-    .btn{background:#fff;border:none;border-radius:10px;padding:12px 18px;margin:8px;font-size:1rem;cursor:pointer;transition:all .18s;}
-    .btn:hover{transform:scale(1.03)}
-    input,select{width:100%;padding:10px;border-radius:8px;border:1px solid #cfcfcf;margin-top:8px;font-size:0.98rem;box-sizing:border-box;}
-    #formulaire{display:none;margin-top:12px;text-align:left}
-    #result{margin-top:14px;font-weight:600;white-space:pre-line}
-    .spinner{display:inline-block;width:18px;height:18px;border:3px solid rgba(0,0,0,0.15);border-top-color:#333;border-radius:50%;animation:spin .9s linear infinite;vertical-align:middle;margin-right:8px;}
-    @keyframes spin{to{transform:rotate(360deg)}}
-    .small{font-size:0.9rem;color:#555}
-    .note{font-size:0.85rem;color:#666;margin-top:8px}
+    input {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      width: 280px;
+      margin-bottom: 15px;
+      font-size: 1em;
+    }
+    button {
+      background-color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background-color: #ffe29f;
+    }
+    #result {
+      margin-top: 15px;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>🎨 Espace Créatif — Soumission artiste</h1>
-
-    <div id="choice">
-      <button class="btn" onclick="choose('artiste')">Je suis Artiste</button>
-      <button class="btn" onclick="choose('visiteur')">Je suis Visiteur</button>
-    </div>
-
-    <div id="formulaire">
-      <label class="small">🖌️ Pseudo Discord (ex: MonPseudo#1234) :</label>
-      <input id="nom" type="text" placeholder="Ex : @MonPseudo#1234 ou MonPseudo#1234" />
-
-      <label class="small" style="margin-top:10px">🎭 Domaine artistique :</label>
-      <select id="domaine">
-        <option value="">-- Choisissez votre domaine --</option>
-        <option>🎨 Dessin / Illustration</option>
-        <option>🖌️ Peinture</option>
-        <option>📷 Photographie</option>
-        <option>🎬 Vidéo / Montage</option>
-        <option>🎵 Musique</option>
-        <option>🎤 Chant</option>
-        <option>💻 Arts numériques</option>
-        <option>🧵 Couture / Mode</option>
-        <option>🧱 Sculpture / 3D</option>
-        <option>📚 Écriture</option>
-      </select>
-
-      <label class="small" style="margin-top:10px">🖼️ Lien vers votre travail :</label>
-      <input id="lien" type="url" placeholder="https://instagram.com/monpseudo" />
-
-      <div style="display:flex;gap:8px;margin-top:12px">
-        <button class="btn" onclick="submitArtist()" style="flex:1">Envoyer pour vérif</button>
-        <button class="btn" onclick="resetForm()" style="flex:0">Annuler</button>
-      </div>
-
-      <div class="note">
-        Astuce : pour une vérif plus rapide, donne ton tag exact (Pseudo#1234) ou ton ID (suite de chiffres).
-      </div>
-    </div>
-
-    <div id="result"></div>
-  </div>
+  <h1>🎨 Vérification d'Artiste</h1>
+  <p>Entrez votre pseudo Discord (ex: Dridri_2830)</p>
+  <input type="text" id="pseudo" placeholder="Pseudo Discord">
+  <p>Donnez un lien vers votre travail (site, Insta, etc.)</p>
+  <input type="text" id="lien" placeholder="https://...">
+  <button onclick="envoyer()">Envoyer</button>
+  <div id="result"></div>
 
   <script>
-    // 🔧 Remplace par ton webhook Discord (ex: https://discord.com/api/webhooks/xxx/yyy)
-    const webhookURL = "https://discord.com/api/webhooks/1430205464226037945/DZG49PMOKi81MASgrJoBioJrznSAvrH5fIqTv6Yupu8y0ZuT8ClQfQzvJM-BGiQkv10A";
+    async function envoyer() {
+      const pseudo = document.getElementById("pseudo").value.trim();
+      const lien = document.getElementById("lien").value.trim();
+      const result = document.getElementById("result");
 
-    function choose(role){
-      document.getElementById('choice').style.display = 'none';
-      const form = document.getElementById('formulaire');
-      const result = document.getElementById('result');
-      result.innerText = '';
-      if(role === 'artiste'){
-        form.style.display = 'block';
-      } else {
-        form.style.display = 'none';
-        result.innerText = "👋 Bienvenue visiteur ! Ton arrivée a été notifiée sur Discord.";
-        sendVisitorToDiscord();
-      }
-    }
-
-    function resetForm(){
-      document.getElementById('choice').style.display = 'block';
-      document.getElementById('formulaire').style.display = 'none';
-      document.getElementById('result').innerText = '';
-      document.getElementById('nom').value = '';
-      document.getElementById('domaine').selectedIndex = 0;
-      document.getElementById('lien').value = '';
-    }
-
-    // NOUVEAU : vérif déterministe côté client
-    // Accepte comme "probable" uniquement :
-    // - Discord tag : Pseudo#1234  (optionnellement précédé d'un @)
-    // - ou un ID Discord : suite de 17-20 chiffres
-    function checkDiscordPseudoFormat(pseudo){
-      if(!pseudo) return {valid:false, reason:'Vide'};
-      // nettoie espaces
-      const s = pseudo.trim();
-      // regex tag (avec ou sans @) : /^@?(.{1,32})#(\d{4})$/
-      const tagRegex = /^@?(.{1,32})#(\d{4})$/;
-      const idRegex = /^(\d{17,20})$/;
-      if(tagRegex.test(s)) return {valid:true, type:'tag', reason:'Tag valide (Pseudo#1234)'};
-      if(idRegex.test(s)) return {valid:true, type:'id', reason:'ID Discord valide (suite de chiffres)'};
-      // si commence par @ et sans # — on considère invalide pour être strict
-      return {valid:false, reason:'Format invalide. Donne un Tag (Pseudo#1234) ou un ID (suite de chiffres).'};
-    }
-
-    function submitArtist(){
-      const nomRaw = document.getElementById('nom').value.trim();
-      const domaine = document.getElementById('domaine').value.trim();
-      const lien = document.getElementById('lien').value.trim();
-      const resultEl = document.getElementById('result');
-
-      if(!nomRaw || !domaine || !lien){
-        resultEl.innerText = "❗ Merci de remplir tous les champs (pseudo, domaine, lien).";
+      if (!pseudo || !lien) {
+        result.innerText = "❗ Remplis tous les champs.";
         return;
       }
 
-      // affichage du chargement
-      resultEl.innerHTML = '<span class="spinner"></span>Vérification du pseudo en cours...';
+      result.innerText = "⏳ Envoi en cours...";
 
-      // petit délai pour l'effet de vérif
-      setTimeout(() => {
-        const check = checkDiscordPseudoFormat(nomRaw);
-        if(check.valid){
-          resultEl.innerHTML =
-            "✅ Format du pseudo : OK (" + check.reason + ").\n" +
-            "✅ Ton lien a été envoyé aux modérateurs pour validation.\n" +
-            "(Le staff confirmera sur Discord si le compte existe sur le serveur.)";
-        } else {
-          resultEl.innerHTML =
-            "⚠️ Format du pseudo : NON VALIDE.\n" +
-            check.reason + "\n\n" +
-            "Ton lien a quand même été envoyé aux modérateurs pour vérification manuelle. " +
-            "Donne un tag exact (Pseudo#1234) ou ton ID pour accélérer la validation.";
-        }
-
-        // Prépare le message envoyé au webhook (inclut le résultat du contrôle de format)
-        const payload = {
-          content:
-            `🎨 **Nouvelle soumission artiste**\n` +
-            `👤 Pseudo déclaré : ${nomRaw}\n` +
-            `📂 Domaine : ${domaine}\n` +
-            `🔗 Lien : ${lien}\n` +
-            `🔎 Contrôle format pseudo : ${check.valid ? 'format valide' : 'format invalide'} (${check.reason})\n` +
-            `⚠️ Note : vérification réelle du compte à faire manuellement par le staff sur Discord.`
-        };
-
-        fetch(webhookURL, {
-          method:'POST',
-          headers:{ 'Content-Type':'application/json' },
-          body: JSON.stringify(payload)
-        }).catch(err => {
-          console.error('Erreur fetch webhook:', err);
-          resultEl.innerHTML += "\n\n❗ Erreur lors de l'envoi de la notification (vérifie ton webhook).";
+      try {
+        const response = await fetch("http://127.0.0.1:5000/submit_artist", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({ pseudo, lien })
         });
 
-      }, 900);
-    }
-
-    function sendVisitorToDiscord(){
-      const payload = { content: "👀 Un nouveau visiteur vient de découvrir le site !" };
-      fetch(webhookURL, {
-        method:'POST',
-        headers:{ 'Content-Type':'application/json' },
-        body: JSON.stringify(payload)
-      }).catch(err => console.error('Erreur fetch webhook:', err));
+        const data = await response.json();
+        result.innerText = data.message || "✅ Envoyé avec succès !";
+      } catch (err) {
+        result.innerText = "⚠️ Erreur : impossible d’envoyer les données.";
+      }
     }
   </script>
 </body>
