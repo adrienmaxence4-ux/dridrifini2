@@ -7,59 +7,58 @@
   <style>
     body {
       font-family: "Poppins", sans-serif;
+      text-align: center;
       background: linear-gradient(135deg, #ffe29f, #ffa99f);
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      color: #333;
       height: 100vh;
       margin: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
 
-    .container {
-      background: white;
-      padding: 30px 40px;
-      border-radius: 15px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-      width: 400px;
-      text-align: center;
+    h1 {
+      font-size: 2.3em;
+      margin-bottom: 1em;
     }
 
-    h2 {
-      margin-bottom: 20px;
-      color: #333;
+    .btn {
+      background: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 15px 30px;
+      margin: 10px;
+      font-size: 1.2em;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.2s;
     }
 
-    button, input {
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
+    .btn:hover {
+      transform: scale(1.05);
+      background: #ffe29f;
+    }
+
+    #formulaire {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    input, select {
+      padding: 10px;
+      width: 270px;
       border-radius: 8px;
       border: 1px solid #ccc;
       font-size: 1em;
+      margin-top: 10px;
     }
 
-    button {
-      background-color: #ff8c42;
-      color: white;
-      border: none;
-      cursor: pointer;
+    #result {
+      margin-top: 20px;
+      font-size: 1.2em;
       font-weight: bold;
-      transition: all 0.2s;
-    }
-
-    button:hover {
-      background-color: #ff6f1e;
-      transform: scale(1.05);
-    }
-
-    .status {
-      margin-top: 15px;
-      font-weight: bold;
-      color: #333;
-    }
-
-    .hidden {
-      display: none;
+      max-width: 80%;
     }
 
     label {
@@ -71,80 +70,101 @@
   </style>
 </head>
 <body>
-  <!-- Choix Visiteur / Artiste -->
-  <div class="container" id="choiceContainer">
-    <h2>Bienvenue !</h2>
-    <p>Êtes-vous :</p>
-    <button id="visitorBtn">Visiteur</button>
-    <button id="artistBtn">Artiste</button>
+  <h1>🎨 Bienvenue sur l’Espace Créatif du Serveur 🎨</h1>
+
+  <div id="choice">
+    <button class="btn" onclick="choose('artiste')">Je suis Artiste</button>
+    <button class="btn" onclick="choose('visiteur')">Je suis Visiteur</button>
   </div>
 
-  <!-- Formulaire Artiste -->
-  <div class="container hidden" id="artistFormContainer">
-    <h2>Vérification Artiste</h2>
+  <div id="formulaire">
     <form id="artistForm">
-      <label>Pseudo Discord :</label>
-      <input type="text" id="pseudo" placeholder="Ex: Dridri_2830" required>
+      <label>🖌️ Entrez votre nom ou pseudo Discord :</label>
+      <input type="text" id="nom" placeholder="Exemple : @NomDiscord" required>
 
-      <label>Lien vers votre travail (site, réseaux) :</label>
-      <input type="url" id="lien" placeholder="Ex: https://instagram.com/dridri_art" required>
+      <label>🎭 Sélectionnez votre domaine artistique :</label>
+      <select id="domaine" required>
+        <option value="">Choisissez votre domaine</option>
+        <option>🎨 Dessin / Illustration</option>
+        <option>🖌️ Peinture</option>
+        <option>📷 Photographie</option>
+        <option>🎬 Vidéo / Montage</option>
+        <option>🎵 Musique</option>
+        <option>🎤 Chant</option>
+        <option>💻 Arts numériques</option>
+        <option>🧵 Couture / Mode</option>
+        <option>🧱 Sculpture / 3D</option>
+        <option>📚 Écriture</option>
+      </select>
 
-      <label>Domaine artistique :</label>
-      <input type="text" id="domaine" placeholder="Ex: Dessin, Musique..." required>
+      <label>🖼️ Lien vers votre travail (site, Insta, etc.) :</label>
+      <input type="url" id="lien" placeholder="Exemple : https://instagram.com/monpseudo" required>
 
-      <button type="submit">Envoyer</button>
-      <div class="status" id="status"></div>
+      <button type="submit" class="btn">Envoyer</button>
     </form>
   </div>
 
+  <div id="result"></div>
+
   <script>
-    const choiceContainer = document.getElementById("choiceContainer");
-    const artistFormContainer = document.getElementById("artistFormContainer");
-    const visitorBtn = document.getElementById("visitorBtn");
-    const artistBtn = document.getElementById("artistBtn");
-    const form = document.getElementById("artistForm");
-    const status = document.getElementById("status");
+    const webhookURL = "TON_WEBHOOK_ICI"; // Remplace par ton webhook Discord
 
-    // Visiteur
-    visitorBtn.addEventListener("click", () => {
-      choiceContainer.innerHTML = "<h2>Bienvenue visiteur !</h2><p>Merci de visiter notre site.</p>";
-      // Ici tu peux ajouter un fetch pour notifier le bot si nécessaire
-    });
+    function choose(role) {
+      document.getElementById("choice").style.display = "none";
+      const form = document.getElementById("formulaire");
+      const result = document.getElementById("result");
 
-    // Artiste
-    artistBtn.addEventListener("click", () => {
-      choiceContainer.classList.add("hidden");
-      artistFormContainer.classList.remove("hidden");
-    });
+      if (role === "artiste") {
+        form.style.display = "flex";
+        result.innerText = "";
+      } else {
+        result.innerText = "👋 Bienvenue, visiteur ! Profite et amuse-toi !";
+        sendVisitorToDiscord();
+      }
+    }
 
-    // Envoi formulaire artiste
-    form.addEventListener("submit", async (e) => {
+    document.getElementById("artistForm").addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const pseudo = document.getElementById("pseudo").value;
-      const lien = document.getElementById("lien").value;
-      const domaine = document.getElementById("domaine").value;
+      const nom = document.getElementById("nom").value.trim();
+      const domaine = document.getElementById("domaine").value.trim();
+      const lien = document.getElementById("lien").value.trim();
+      const result = document.getElementById("result");
 
-      status.textContent = "Envoi en cours...";
+      if (!nom || !domaine || !lien) {
+        result.innerText = "❗ Merci de remplir tous les champs.";
+        return;
+      }
+
+      result.innerText = "✅ Merci ! Ton lien a été envoyé.\nUn modérateur Discord validera ton rôle bientôt.";
+
+      const data = {
+        content: `🎨 **Nouvelle demande artiste !**
+👤 Nom : ${nom}
+📂 Domaine : ${domaine}
+🔗 Lien : ${lien}
+⏳ En attente de validation d'un modérateur.`
+      };
 
       try {
-        const response = await fetch("https://MON-BOT-URL/submit_artist", {
+        await fetch(webhookURL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ pseudo, lien, domaine })
+          body: JSON.stringify(data)
         });
-
-        const data = await response.json();
-        if (data.status) {
-          status.textContent = data.message; // Vérification envoyée au bot
-        } else {
-          status.textContent = "Erreur : impossible d'envoyer les données.";
-        }
-      } catch (error) {
-        status.textContent = "Erreur : serveur inaccessible.";
-        console.error(error);
+      } catch (err) {
+        console.error("Erreur d’envoi :", err);
       }
     });
+
+    function sendVisitorToDiscord() {
+      const data = { content: "👀 Un nouveau **visiteur** vient de découvrir le site !" };
+      fetch(webhookURL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      }).catch(err => console.error("Erreur d’envoi :", err));
+    }
   </script>
 </body>
 </html>
