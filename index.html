@@ -1,122 +1,163 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Bienvenue sur le site</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🎭 Choisis ton rôle !</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f0f2f5;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #89f7fe, #66a6ff);
+      color: #fff;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
-      height: 100vh;
     }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .choices {
+      display: flex;
+      gap: 30px;
+    }
+
+    button {
+      background: #fff;
+      color: #333;
+      border: none;
+      padding: 15px 25px;
+      border-radius: 15px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+      transition: 0.3s;
+    }
+
+    button:hover {
+      transform: scale(1.1);
+      background: #ffe15d;
+    }
+
     .container {
-      background: white;
+      background: rgba(255, 255, 255, 0.15);
       padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+      width: 90%;
+      max-width: 400px;
+      backdrop-filter: blur(10px);
+    }
+
+    input {
+      padding: 10px;
+      width: 80%;
       border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-      width: 400px;
+      border: none;
+      margin: 8px 0;
+      font-size: 1rem;
       text-align: center;
     }
-    button, input {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-    button {
-      background-color: #4CAF50;
-      color: white;
-      cursor: pointer;
-      border: none;
-    }
-    button:hover {
-      background-color: #45a049;
-    }
-    .status {
-      margin-top: 15px;
-      font-weight: bold;
-    }
+
     .hidden {
       display: none;
+    }
+
+    .emoji {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
     }
   </style>
 </head>
 <body>
-  <div class="container" id="choiceContainer">
-    <h2>Bienvenue !</h2>
-    <p>Êtes-vous :</p>
-    <button id="visitorBtn">Visiteur</button>
-    <button id="artistBtn">Artiste</button>
-  </div>
+  <div class="container">
+    <div id="home">
+      <div class="emoji">🎨🎭</div>
+      <h1>Bienvenue sur la scène créative !</h1>
+      <p>Choisis ton rôle 👇</p>
+      <div class="choices">
+        <button onclick="showVisitor()">👀 Visiteur</button>
+        <button onclick="showArtist()">🎨 Artiste</button>
+      </div>
+    </div>
 
-  <div class="container hidden" id="artistFormContainer">
-    <h2>Vérification Artiste</h2>
-    <form id="artistForm">
-      <label>Pseudo Discord :</label>
-      <input type="text" id="pseudo" placeholder="Ex: Dridri_2830" required>
+    <div id="visitor" class="hidden">
+      <div class="emoji">👋</div>
+      <h2>Bienvenue, visiteur curieux !</h2>
+      <p>Merci de venir découvrir nos artistes 💫</p>
+      <button onclick="goHome()">🏠 Retour</button>
+    </div>
 
-      <label>Lien vers votre travail (site, réseaux) :</label>
-      <input type="url" id="lien" placeholder="Ex: https://instagram.com/dridri_art" required>
-
-      <label>Domaine artistique :</label>
-      <input type="text" id="domaine" placeholder="Ex: Dessin, Musique..." required>
-
-      <button type="submit">Envoyer</button>
-      <div class="status" id="status"></div>
-    </form>
+    <div id="artist" class="hidden">
+      <div class="emoji">🧑‍🎨</div>
+      <h2>Formulaire artiste 🎭</h2>
+      <p>Entre ton pseudo et un lien vers ton travail ✨</p>
+      <input type="text" id="pseudo" placeholder="Ton pseudo 🎨" />
+      <input type="url" id="link" placeholder="Lien vers ton art 🌐" />
+      <button onclick="sendData()">🚀 Envoyer</button>
+      <button onclick="goHome()">🏠 Retour</button>
+      <p id="response"></p>
+    </div>
   </div>
 
   <script>
-    const choiceContainer = document.getElementById("choiceContainer");
-    const artistFormContainer = document.getElementById("artistFormContainer");
-    const visitorBtn = document.getElementById("visitorBtn");
-    const artistBtn = document.getElementById("artistBtn");
-    const form = document.getElementById("artistForm");
-    const status = document.getElementById("status");
+    const home = document.getElementById("home");
+    const visitor = document.getElementById("visitor");
+    const artist = document.getElementById("artist");
 
-    // Si Visiteur → message simple
-    visitorBtn.addEventListener("click", () => {
-      choiceContainer.innerHTML = "<h2>Bienvenue visiteur !</h2><p>Merci de visiter notre site.</p>";
-    });
+    function showVisitor() {
+      home.classList.add("hidden");
+      visitor.classList.remove("hidden");
+    }
 
-    // Si Artiste → montrer formulaire
-    artistBtn.addEventListener("click", () => {
-      choiceContainer.classList.add("hidden");
-      artistFormContainer.classList.remove("hidden");
-    });
+    function showArtist() {
+      home.classList.add("hidden");
+      artist.classList.remove("hidden");
+    }
 
-    // Envoi du formulaire
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
+    function goHome() {
+      home.classList.remove("hidden");
+      visitor.classList.add("hidden");
+      artist.classList.add("hidden");
+    }
 
-      const pseudo = document.getElementById("pseudo").value;
-      const lien = document.getElementById("lien").value;
-      const domaine = document.getElementById("domaine").value;
+    async function sendData() {
+      const pseudo = document.getElementById("pseudo").value.trim();
+      const link = document.getElementById("link").value.trim();
+      const responseElement = document.getElementById("response");
 
-      status.textContent = "Envoi en cours...";
+      if (!pseudo || !link) {
+        responseElement.innerHTML = "⚠️ Merci de remplir tous les champs.";
+        return;
+      }
 
+      // Envoi au bot (tu mettras ton URL Flask ici)
       try {
-        const response = await fetch("https://MON-BOT-URL/submit_artist", {
+        const response = await fetch("https://tonserveur.com/verif", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ pseudo, lien, domaine })
+          body: JSON.stringify({ pseudo, link })
         });
-
         const data = await response.json();
-        if (data.status) {
-          status.textContent = data.message; // [ok] Vérification envoyée au bot.
-        } else {
-          status.textContent = "Erreur : impossible d'envoyer les données.";
-        }
+        responseElement.innerHTML = `[ok] ${data.message}`;
       } catch (error) {
-        status.textContent = "Erreur : serveur inaccessible.";
-        console.error(error);
+        responseElement.innerHTML = "❌ Erreur lors de l'envoi.";
       }
-    });
+    }
   </script>
 </body>
 </html>
