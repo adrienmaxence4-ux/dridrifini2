@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Vérification Artiste</title>
+  <title>Bienvenue sur le site</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -16,10 +16,11 @@
       background: white;
       padding: 30px;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
       width: 400px;
+      text-align: center;
     }
-    input, button {
+    button, input {
       width: 100%;
       padding: 10px;
       margin-top: 10px;
@@ -39,10 +40,20 @@
       margin-top: 15px;
       font-weight: bold;
     }
+    .hidden {
+      display: none;
+    }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="container" id="choiceContainer">
+    <h2>Bienvenue !</h2>
+    <p>Êtes-vous :</p>
+    <button id="visitorBtn">Visiteur</button>
+    <button id="artistBtn">Artiste</button>
+  </div>
+
+  <div class="container hidden" id="artistFormContainer">
     <h2>Vérification Artiste</h2>
     <form id="artistForm">
       <label>Pseudo Discord :</label>
@@ -60,9 +71,25 @@
   </div>
 
   <script>
+    const choiceContainer = document.getElementById("choiceContainer");
+    const artistFormContainer = document.getElementById("artistFormContainer");
+    const visitorBtn = document.getElementById("visitorBtn");
+    const artistBtn = document.getElementById("artistBtn");
     const form = document.getElementById("artistForm");
     const status = document.getElementById("status");
 
+    // Si Visiteur → message simple
+    visitorBtn.addEventListener("click", () => {
+      choiceContainer.innerHTML = "<h2>Bienvenue visiteur !</h2><p>Merci de visiter notre site.</p>";
+    });
+
+    // Si Artiste → montrer formulaire
+    artistBtn.addEventListener("click", () => {
+      choiceContainer.classList.add("hidden");
+      artistFormContainer.classList.remove("hidden");
+    });
+
+    // Envoi du formulaire
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
