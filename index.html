@@ -68,7 +68,7 @@
       result.innerText = "⏳ Envoi en cours...";
 
       try {
-        const response = await fetch("http://127.0.0.1:8000/submit_artist", {
+        const response = await fetch("http://172.31.85.34:5000//submit_artist", {
           method: "POST",
           headers: {"Content-Type": "application/json"},
           body: JSON.stringify({ pseudo, lien })
@@ -83,5 +83,6 @@
   </script>
 </body>
 </html>
+
 
 
