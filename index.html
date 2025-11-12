@@ -2,50 +2,76 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Bienvenue sur le site</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Espace Créatif du Serveur</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f0f2f5;
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #ffe29f, #ffa99f);
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
+      margin: 0;
     }
+
     .container {
       background: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      padding: 30px 40px;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
       width: 400px;
       text-align: center;
     }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
     button, input {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       margin-top: 10px;
-      border-radius: 5px;
+      border-radius: 8px;
       border: 1px solid #ccc;
+      font-size: 1em;
     }
+
     button {
-      background-color: #4CAF50;
+      background-color: #ff8c42;
       color: white;
-      cursor: pointer;
       border: none;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.2s;
     }
+
     button:hover {
-      background-color: #45a049;
+      background-color: #ff6f1e;
+      transform: scale(1.05);
     }
+
     .status {
       margin-top: 15px;
       font-weight: bold;
+      color: #333;
     }
+
     .hidden {
       display: none;
+    }
+
+    label {
+      margin-top: 10px;
+      display: block;
+      text-align: left;
+      font-weight: 500;
     }
   </style>
 </head>
 <body>
+  <!-- Choix Visiteur / Artiste -->
   <div class="container" id="choiceContainer">
     <h2>Bienvenue !</h2>
     <p>Êtes-vous :</p>
@@ -53,6 +79,7 @@
     <button id="artistBtn">Artiste</button>
   </div>
 
+  <!-- Formulaire Artiste -->
   <div class="container hidden" id="artistFormContainer">
     <h2>Vérification Artiste</h2>
     <form id="artistForm">
@@ -78,18 +105,19 @@
     const form = document.getElementById("artistForm");
     const status = document.getElementById("status");
 
-    // Si Visiteur → message simple
+    // Visiteur
     visitorBtn.addEventListener("click", () => {
       choiceContainer.innerHTML = "<h2>Bienvenue visiteur !</h2><p>Merci de visiter notre site.</p>";
+      // Ici tu peux ajouter un fetch pour notifier le bot si nécessaire
     });
 
-    // Si Artiste → montrer formulaire
+    // Artiste
     artistBtn.addEventListener("click", () => {
       choiceContainer.classList.add("hidden");
       artistFormContainer.classList.remove("hidden");
     });
 
-    // Envoi du formulaire
+    // Envoi formulaire artiste
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -108,7 +136,7 @@
 
         const data = await response.json();
         if (data.status) {
-          status.textContent = data.message; // [ok] Vérification envoyée au bot.
+          status.textContent = data.message; // Vérification envoyée au bot
         } else {
           status.textContent = "Erreur : impossible d'envoyer les données.";
         }
